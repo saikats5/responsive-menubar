@@ -1,0 +1,307 @@
+@import './variables';
+@import './mixins';
+@import './layout';
+
+html {
+	font-size: 63%;
+}
+
+a {
+	text-decoration: none;
+}
+
+.headerContainer {
+	position: relative;
+	height: 60px;
+	font-family: Camphor, Open Sans, Segoe UI, sans-serif;
+	&::before {
+		content: 'mobile';
+		display: none;
+	}
+
+	/***** MOBILE FIRST APPROACH --> 480PX *****/
+	.mobileNav {
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 60px;
+		width: 60px;
+		overflow: hidden;
+		text-indent: 100%;
+		white-space: nowrap;
+		color: transparent;
+		span, span::after, span::before {
+			position: absolute;
+			background-color: $color-dark-grey;
+			height: 3px;
+			width: 26px;
+		}
+		span {
+			@include center;
+			transition: background-color .3s;
+		}
+		span::after, span::before {
+			content: '';
+			left: 0;
+			transition: transform .3s;
+		}
+		span::before {
+			transform: translateY(-9px);
+		}
+		span::after {
+			transform: translateY(9px);
+		} 
+	}
+
+	&.mobileNavOpen .mobileNav span {
+		background-color: transparent;
+		&::before {
+			transform: rotate(45deg);
+		}
+		&::after {
+			transform: rotate(-45deg);
+		}
+	}
+	.navContainer {
+		display: none;
+	}
+	.dropdownContainer {
+		display: none;
+		position: absolute;
+		top: 60px;
+		left: 0;
+		width: 100%;
+		padding: 1.2em 5%;
+		box-shadow: inset 0 1px 0 shade($color-white, 10%);
+		background-color: $color-white;
+		.dropdownList > ul {
+			list-style: none;
+			.listBlock .content ul {
+				list-style: none;
+				li {
+					margin-bottom: 3.4em;
+					@include clearfix;
+					a {
+						display: block;
+						color: shade($color-white, 40%);
+						&::before {
+							content: '';
+							display: inline-block;
+							float: left;
+							height: 54px;
+							width: 54px;
+							margin-right: .6em;
+							background: $circle-icon-color;
+							border-radius: 50%;
+							color: shade($color-white, 40%);
+						}
+						span {
+							display: block;
+							line-height: 2.3;
+							height: 22px;
+							font-size: 1.5rem;
+						}
+						span:first-child {
+							font-weight: bold;
+						}
+						&:hover::before {
+							background-color: $color-dark-grey;
+						}
+						 &:hover {
+							color: shade($color-white, 80%);
+						}
+					}
+				}
+			}
+		}
+	}
+	&.mobileNavOpen .dropdownContainer {
+		display: block;
+	}
+
+	/***** DESKTOP --> 1024PX *****/
+	@include MQ(L) {
+		position: absolute;
+		height: 100vh;
+		left: 0;
+		top: 0;
+		width: 100%;
+		padding: 0;
+		text-align: center;
+		background-color: $header-background;
+		&::before {
+			content: 'desktop';
+		}
+		.mobileNav {
+			display: none;
+		}
+		.navContainer {
+			display: inline-block;
+			> ul {
+				list-style: none;
+				> li {
+					display: inline-block;
+					float: left;
+					> a {
+						display: block;
+						padding: 0 1.8em;
+						height: 70px;
+						line-height: 70px;
+						color: $color-white;
+						text-transform: capitalize;
+						font-size: 1.8rem;
+						@include font-smoothing;
+						transition: opacity .2s;
+					}
+				}
+			}
+		}
+
+		&.is-dropdown-visible {
+			.navContainer {
+				> ul {
+					list-style: none;
+					> li {
+						> a {
+							opacity: 1;
+						}
+						&.active {
+							> a {
+								opacity: .6;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.dropdownContainer {
+			display: block;
+			top: 58px;
+			width: auto;
+			padding: 0;
+			box-shadow: none;
+			background-color: transparent;
+			transform: translateZ(0);
+			will-change: transform;
+			transform: translateY(20px);
+			transition: transform .3s;
+		}
+
+		&.is-dropdown-visible .dropdownContainer {
+			transform: translateY(0);
+		}
+
+		.dropdownList {
+			position: absolute;
+			top: 12px;
+			left: 0;
+			visibility: hidden;
+			transform: translateZ(0);
+			will-change: transform, width, height;
+			transition: visibility .3s;
+			box-shadow: 0 10px 20px rgba(#000, .08);
+			background: $color-white;
+			.no-csstransitions & {
+				display: none;
+			}
+			&::before {
+				content: '';
+				position: absolute;
+				bottom: 100%;
+				@include center(x);
+				height: 0;
+				width: 0;
+				border: 8px solid transparent;
+				border-bottom-color: $color-white;
+				opacity: 0;
+				transition: opacity .3s;
+			}
+
+			> ul {
+				list-style: none;
+				position: relative;
+				z-index: 1;
+				height: 100%;
+				width: 100%;
+				overflow: hidden;
+				top: -10px;
+			}
+		}
+
+		&.is-dropdown-visible .dropdownList {
+			visibility: visible;
+			transition: transform .3s, width .3s, height .3s;
+			border: 10px solid $color-white;
+			border-radius: 5px;
+			&::before {
+				opacity: 1;
+			}
+			.submenubaseContainer {
+				position: absolute;
+				top: 0;
+				left: 0;
+				height: 1px;
+				width: 1px;
+				background: $color-white;
+				opacity: 0;
+				transition: opacity .3s;
+				transform-origin: top left;
+				transform: translateZ(0);
+				will-change: transform;
+				backface-visibility: hidden;
+				opacity: 1;
+				transition: transform .3s, opacity .3s;
+			}
+		}
+
+		.dropdown {
+			position: absolute;
+			left: 0;
+			top: 0;
+			opacity: 0;
+			visibility: hidden;
+			width: 100%;
+			transition: opacity .3s, visibility .3s;
+
+			&.active {
+				opacity: 1;
+				visibility: visible;
+			}
+
+			&.move-left .content {
+				transform: translateX(-100px);
+			}
+
+			&.move-right .content {
+				transform: translateX(100px);
+			}
+		}
+
+		.label {
+			display: none;
+		}
+		.content {
+			padding: 2.2em 1.8em;
+			transition: transform .3s;
+			text-align: left;
+			> ul {
+				@include clearfix;
+				list-style: none;
+				> li {
+					margin-right: 4%;
+					margin-top: 0;
+	
+					&:nth-of-type(2n) {
+						margin-right: 0;
+					}
+				}
+			}
+		}
+		.listBlock {
+			.content {
+				width: 510px;
+			}
+		}
+	}
+}

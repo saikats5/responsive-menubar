@@ -1,0 +1,15 @@
+$MOBILE: 480px;   
+$TABLET: 768px;     
+$DESKTOP: 1024px;     
+
+@mixin MQ($device) {
+    @if $device == S {
+        @media only screen and (min-width: $MOBILE) { @content; } 
+    }
+    @else if $device == M {
+        @media only screen and (min-width: $TABLET) { @content; } 
+    }
+    @else if $device == L {
+        @media only screen and (min-width: $DESKTOP) { @content; } 
+    }
+}
